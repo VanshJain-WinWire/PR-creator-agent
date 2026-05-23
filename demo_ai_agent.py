@@ -113,7 +113,7 @@ def demo_ai_agent():
     print("   - Responded to natural language queries")
     print()
     print("📚 Next Steps:")
-    print("   1. Read AI_AGENT_README.md for full documentation")
+    print("   1. Read README.md for full documentation")
     print("   2. Try example_ai_agent.py for more examples")
     print("   3. Create your first PR with the AI agent!")
     print()

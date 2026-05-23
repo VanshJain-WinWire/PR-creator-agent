@@ -281,7 +281,7 @@ def main():
         print("Next steps:")
         print("  1. Run example_ai_agent.py to see demonstrations")
         print("  2. Try creating a PR with the AI agent")
-        print("  3. Read AI_AGENT_README.md for more information")
+        print("  3. Read README.md for more information")
         return 0
     else:
         print()

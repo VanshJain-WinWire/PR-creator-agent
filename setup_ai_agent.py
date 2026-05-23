@@ -76,19 +76,6 @@ def main():
     aifoundry_api_key = get_input("AI Foundry API Key")
     print()
     
-    # Optional: Teams Bot
-    print("💬 Microsoft Teams Bot (Optional)")
-    print("-" * 60)
-    configure_teams = input("Configure Teams Bot? (y/N): ").strip().lower() == 'y'
-    
-    if configure_teams:
-        teams_app_id = get_input("Teams App ID", required=False)
-        teams_app_password = get_input("Teams App Password", required=False)
-    else:
-        teams_app_id = ""
-        teams_app_password = ""
-    print()
-    
     # Default branch
     print("🌿 Default Configuration")
     print("-" * 60)
@@ -108,11 +95,6 @@ REPO_PATH={repo_path}
 # Microsoft AI Foundry Configuration (for AI Agent)
 AIFOUNDRY_ENDPOINT={aifoundry_endpoint}
 AIFOUNDRY_API_KEY={aifoundry_api_key}
-
-# Microsoft Teams Bot Configuration (Optional)
-TEAMS_APP_ID={teams_app_id}
-TEAMS_APP_PASSWORD={teams_app_password}
-TEAMS_BOT_ENDPOINT=/api/messages
 
 # Default Branch Configuration
 DEFAULT_TARGET_BRANCH={default_branch}
@@ -145,9 +127,7 @@ DEFAULT_TARGET_BRANCH={default_branch}
     print("   python example_ai_agent.py")
     print()
     print("4. Read the documentation:")
-    print("   - README.md - General overview")
-    print("   - AI_AGENT_README.md - AI agent guide")
-    print("   - QUICKSTART.md - Quick start guide")
+    print("   - README.md - AI agent overview and usage")
     print()
     print("📚 For more information, see the documentation files.")
     print()
