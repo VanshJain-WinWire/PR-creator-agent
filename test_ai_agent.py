@@ -8,7 +8,7 @@ import sys
 from dotenv import load_dotenv
 
 # Load environment variables
-load_dotenv()
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".env"), override=True)
 
 
 def check_environment_variables():
@@ -24,12 +24,15 @@ def check_environment_variables():
         "REPO_ID": "Repository ID",
         "REPO_PATH": "Local Repository Path",
         "AIFOUNDRY_ENDPOINT": "AI Foundry Endpoint",
-        "AIFOUNDRY_API_KEY": "AI Foundry API Key"
+        "AIFOUNDRY_API_KEY": "AI Foundry API Key (or AZURE_OPENAI_API_KEY / OPENAI_API_KEY)"
     }
     
     missing = []
     for var, description in required_vars.items():
-        value = os.getenv(var)
+        if var == "AIFOUNDRY_API_KEY":
+            value = os.getenv("AIFOUNDRY_API_KEY") or os.getenv("AZURE_OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
+        else:
+            value = os.getenv(var)
         if value:
             # Mask sensitive values
             if "KEY" in var or "PAT" in var:

@@ -7,6 +7,7 @@ import json
 import requests
 from typing import Dict, Any, List, Optional, Union
 from dataclasses import dataclass
+from urllib.parse import urlparse
 
 
 @dataclass
@@ -23,19 +24,31 @@ class AIFoundryClient:
         self,
         endpoint: str = None,
         api_key: str = None,
-        deployment: str = "gpt-4",
-        api_version: str = "2024-02-15-preview"
+        deployment: str = "gpt-4o",
+        api_version: str = "2024-08-01-preview"
     ):
         """Initialize AI Foundry client with endpoint and authentication"""
         self.endpoint = endpoint or os.getenv("AIFOUNDRY_ENDPOINT", "https://af-sdlc-dev.services.ai.azure.com")
-        self.api_key = api_key or os.getenv("AIFOUNDRY_API_KEY")
+        self.api_key = (
+            api_key
+            or os.getenv("AIFOUNDRY_API_KEY")
+            or os.getenv("AZURE_OPENAI_API_KEY")
+            or os.getenv("OPENAI_API_KEY")
+        )
         self.deployment = deployment
         self.api_version = api_version
+        self.api_versions = [self.api_version, "2024-02-01-preview", "2024-02-15-preview"]
         
         if not self.api_key:
-            raise ValueError("API key is required. Set AIFOUNDRY_API_KEY environment variable.")
+            raise ValueError(
+                "API key is required. Set AIFOUNDRY_API_KEY (or AZURE_OPENAI_API_KEY / OPENAI_API_KEY)."
+            )
+        self.api_key = self.api_key.strip().strip('"').strip("'")
         
-        # Normalize endpoint
+        # Normalize endpoint to base host in case a path was provided.
+        parsed = urlparse(self.endpoint)
+        if parsed.scheme and parsed.netloc:
+            self.endpoint = f"{parsed.scheme}://{parsed.netloc}"
         self.endpoint = self.endpoint.rstrip('/')
         
         # Build base URL
@@ -68,8 +81,6 @@ class AIFoundryClient:
         Returns:
             Response dictionary containing choices, usage, and tool calls if any
         """
-        url = f"{self.base_url}/chat/completions?api-version={self.api_version}"
-        
         payload = {
             "messages": messages,
             "temperature": temperature,
@@ -83,17 +94,34 @@ class AIFoundryClient:
                 payload["tool_choice"] = tool_choice
         
         try:
-            response = requests.post(
-                url,
-                headers=self.headers,
-                json=payload,
-                timeout=60
-            )
-            response.raise_for_status()
-            return response.json()
-            
+            last_response = None
+            for ver in self.api_versions:
+                url = f"{self.base_url}/chat/completions?api-version={ver}"
+                response = requests.post(
+                    url,
+                    headers=self.headers,
+                    json=payload,
+                    timeout=60
+                )
+                if response.status_code == 200:
+                    return response.json()
+                last_response = response
+                # 401/403 are auth issues and retrying versions will not help.
+                if response.status_code in (401, 403):
+                    break
+
+            if last_response is not None:
+                last_response.raise_for_status()
+            raise Exception("AI Foundry request failed without a response")
+
         except requests.exceptions.HTTPError as e:
             error_detail = e.response.text if e.response else str(e)
+            if e.response is not None and e.response.status_code == 401:
+                raise Exception(
+                    "AI Foundry API error: 401 - Invalid API key or endpoint mismatch. "
+                    "Confirm AIFOUNDRY_ENDPOINT and rotate AIFOUNDRY_API_KEY. "
+                    f"Details: {error_detail}"
+                )
             raise Exception(f"AI Foundry API error: {e.response.status_code} - {error_detail}")
         except requests.exceptions.RequestException as e:
             raise Exception(f"Request failed: {str(e)}")

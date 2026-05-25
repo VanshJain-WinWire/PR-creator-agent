@@ -30,7 +30,7 @@ class AIPRAgent:
         self.ai_client = AIFoundryClient(
             endpoint=ai_endpoint or os.getenv("AIFOUNDRY_ENDPOINT", "https://af-sdlc-dev.services.ai.azure.com"),
             api_key=ai_api_key or os.getenv("AIFOUNDRY_API_KEY"),
-            deployment="gpt-4"
+            deployment="gpt-4o"
         )
         
         # Initialize Azure DevOps tools
@@ -88,12 +88,55 @@ Your task is to:
 4. Create a comprehensive, well-formatted PR description
 5. Create the pull request linking it to the work item
 
-When creating the PR description, follow this structure:
-- **Summary**: Brief overview of changes
-- **Work Item**: Link and description of the work item
-- **Changes**: Detailed breakdown of what was modified
-- **Testing**: Any testing notes or requirements
-- **Impact**: Potential impact and considerations
+When creating the PR description, follow this EXACT structure:
+
+### Summary
+
+Briefly describe the purpose of this change. What feature, bug fix or improvement does it address?
+
+---
+
+### Changes
+
+- Describe major changes and their impact
+- Mention any new dependencies, architectural decisions, or patterns used
+- Include screenshots for UI updates (if applicable)
+
+---
+
+### Documentation
+
+- What documentation was added or updated for this change?
+- Link to updated files in `/documentation` when applicable
+- If no documentation changes were needed, explain why
+
+---
+
+### Testing
+
+What was tested and how?
+
+- [ ] Unit tests written/updated
+- [ ] Manual testing performed
+- [ ] Code compiles successfully in local env
+- [ ] Deploy to BLD from Feature branch
+
+**IMPORTANT**: Only check boxes (use [x]) if you have CONFIRMED information about that item from your analysis. If you cannot determine whether something was done, leave it UNCHECKED (use [ ]).
+
+---
+
+### Checklist
+
+- [ ] Follows .NET coding conventions (naming, formatting)
+- [ ] Logic is clear and well-structured
+- [ ] Input validation is included where needed
+- [ ] Documentation has been added or updated, or a reason is provided above for why no documentation changes were needed
+- [ ] No secrets or credentials in code
+- [ ] Logging is meaningful and not overly verbose
+- [ ] Code is commented where complex
+- [ ] Relevant tests included and pass
+
+**IMPORTANT**: Only check boxes (use [x]) if you can CONFIRM from your code analysis. If you cannot verify an item, leave it UNCHECKED (use [ ]).
 
 Use markdown formatting and be thorough but concise. Always link the work item IDs properly.
 
@@ -185,14 +228,58 @@ You understand natural language requests and can:
 - Extract branch names, work item IDs, and PR requirements from user requests
 - Fetch work item details and verify branches
 - Analyze code changes between branches
-- Generate comprehensive PR descriptions
-- Create pull requests in Azure DevOps
+- Generate comprehensive PR descriptions following the specified format
+
+When creating PR descriptions, follow this EXACT structure:
+
+### Summary
+Briefly describe the purpose of this change. What feature, bug fix or improvement does it address?
+
+---
+
+### Changes
+- Describe major changes and their impact
+- Mention any new dependencies, architectural decisions, or patterns used
+- Include screenshots for UI updates (if applicable)
+
+---
+
+### Documentation
+- What documentation was added or updated for this change?
+- Link to updated files in `/documentation` when applicable
+- If no documentation changes were needed, explain why
+
+---
+
+### Testing
+What was tested and how?
+
+- [ ] Unit tests written/updated
+- [ ] Manual testing performed
+- [ ] Code compiles successfully in local env
+- [ ] Deploy to BLD from Feature branch
+
+**IMPORTANT**: Only check boxes (use [x]) if you have CONFIRMED information. Leave UNCHECKED (use [ ]) if unknown.
+
+---
+
+### Checklist
+- [ ] Follows .NET coding conventions (naming, formatting)
+- [ ] Logic is clear and well-structured
+- [ ] Input validation is included where needed
+- [ ] Documentation has been added or updated, or a reason is provided above for why no documentation changes were needed
+- [ ] No secrets or credentials in code
+- [ ] Logging is meaningful and not overly verbose
+- [ ] Code is commented where complex
+- [ ] Relevant tests included and pass
+
+**IMPORTANT**: Only check boxes (use [x]) if you can CONFIRM from your analysis. Leave UNCHECKED (use [ ]) if you cannot verify.
 
 When given a request, parse the information and use the available tools to:
 1. Get work item details
 2. Verify branches exist
 3. Analyze code changes
-4. Create the pull request with a well-formatted description
+4. Create the pull request with properly formatted description
 
 Always be helpful and thorough in your analysis."""
         

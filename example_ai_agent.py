@@ -110,7 +110,7 @@ def example_4_interactive_chat():
     
     # First message
     result1 = agent.chat_with_agent(
-        "Can you tell me about work item 12345?",
+        "Can you tell me about work item 107295?",
         conversation_history=conversation
     )
     print("AI:", result1['response'])
@@ -126,7 +126,7 @@ def example_4_interactive_chat():
     
     # Create PR in the conversation
     result3 = agent.chat_with_agent(
-        "Create a PR from feature/new-api to develop for this work item",
+        "Create a PR from feature/multi-format-export-insights to develop for this work item",
         conversation_history=result2['conversation_history']
     )
     print("AI:", result3['response'])
@@ -142,7 +142,7 @@ def example_5_quick_helper():
     # Quick one-liner PR creation
     result = create_ai_pr(
         work_item_id=12345,
-        source_branch="feature/payment-integration",
+        source_branch="feature/multi-format-export-insights",
         target_branch="develop"
     )
     
@@ -197,8 +197,8 @@ if __name__ == "__main__":
     # example_1_basic_pr_creation()
     # example_2_with_instructions()
     # example_3_natural_language()
-    # example_4_interactive_chat()
+    example_4_interactive_chat()
     # example_5_quick_helper()
-    example_6_check_branches()
+    # example_6_check_branches()
     
     print("\n✅ Example completed successfully!")
